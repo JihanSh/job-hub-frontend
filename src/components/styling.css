@@ -25,6 +25,10 @@ body {
   justify-content: center;
   gap: 1vw;
 }
+.navbar-links a {
+  text-decoration: none;
+  color: black;
+}
 .link-post-job {
   display: flex;
   flex-direction: row;
