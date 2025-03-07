@@ -24,16 +24,25 @@ function JobPostingForm() {
     e.preventDefault();
     setError(null);
     setSuccessMessage("");
-
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setError("Please log in to post a job.");
+      return;
+    }
     const jobData = {
       ...formData,
-      requirements: formData.requirements.split(",").map((req) => req.trim()), 
+      requirements: formData.requirements.split(",").map((req) => req.trim()),
     };
 
     try {
       const response = await axios.post(
         "http://localhost:5005/api/jobs",
-        jobData
+        jobData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, 
+          },
+        }
       );
       setSuccessMessage("Job posted successfully!");
       setFormData({
@@ -102,7 +111,6 @@ function JobPostingForm() {
           placeholder="Requirements (comma separated)"
           required
         />
-       
 
         <button type="submit">Post Job</button>
       </form>
