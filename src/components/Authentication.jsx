@@ -5,7 +5,7 @@ import "./styling.css";
 
 const Authentication = () => {
   const { register, handleSubmit, reset } = useForm();
-  const [isSignup, setIsSignup] = useState(true);
+  const [isSignup, setIsSignup] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [imagePreview, setImagePreview] = useState(null);

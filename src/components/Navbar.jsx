@@ -40,7 +40,7 @@ function Navbar() {
         </div>
 
         <div className="profile-section">
-          {profileImage ? (
+          {profileImage  ? (
             <div className="profile-dropdown">
               <img
                 src={profileImage}
