@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./styling.css";
 import axios from "axios";
+import AllJobs from "./AllJobs";
 
 function Home() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -96,6 +97,7 @@ function Home() {
       ) : jobs !== null ? (
         <p>No jobs found</p>
       ) : null}
+      <AllJobs/>
     </div>
   );
 }

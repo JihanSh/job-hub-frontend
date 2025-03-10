@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./styling.css";
+import { Link } from "react-router-dom";
 
 function AllJobs() {
   const [jobs, setJobs] = useState([]);
@@ -86,7 +87,9 @@ function AllJobs() {
                 <li>No specific requirements</li>
               )}
             </ul>
-            <button className="apply-btn">Apply Now</button>
+            <Link to={`./post-application/${selectedJob._id}`}>
+              <button className="apply-btn">Apply Now</button>
+            </Link>
           </>
         ) : (
           <p>Select a job to see details</p>
