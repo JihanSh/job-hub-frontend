@@ -17,7 +17,7 @@ function App() {
         <Route path="/user-auth" element={<Authentication />} />
         <Route path="/post-job" element={<JobPostingForm />} />
         <Route path="/all-jobs" element={<AllJobs />} />
-        <Route path="/post-application/:jobId" element={<Applications />} />
+        <Route path="/applications/:jobId" element={<Applications/>} />
       </Routes>
     </>
   );

@@ -1,18 +1,39 @@
-import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 function Applications() {
-  const { jobId } = useParams(); 
-  const userId = "USER_ID_FROM_AUTH"; 
-
+  const { jobId } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const jobDetails = location.state?.job; 
+  console.log(jobDetails)
+  const [userId, setUserId] = useState(null);
   const [formData, setFormData] = useState({
     coverLetter: "",
     resume: null,
   });
-
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/user-auth");
+      return;
+    }
+
+    try {
+      const decoded = jwtDecode(token);
+      setUserId(decoded._id);
+    } catch (error) {
+      console.error("Invalid token:", error);
+      setMessage("Authentication error. Please log in again.");
+      localStorage.removeItem("token");
+      navigate("/user-auth");
+    }
+  }, [navigate]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -28,7 +49,7 @@ function Applications() {
     setMessage("");
 
     if (!jobId || !userId) {
-      setMessage("Missing Job ID or User ID.");
+      setMessage("Missing Job ID or User ID. Please log in.");
       setLoading(false);
       return;
     }
@@ -41,7 +62,7 @@ function Applications() {
 
     try {
       await axios.post(
-        `http://localhost:5000/api/applications/${jobId}`,
+        `http://localhost:5005/api/applications/${jobId}`,
         formDataToSend,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -59,7 +80,31 @@ function Applications() {
 
   return (
     <div className="application-form">
-      <h2>Apply for Job ID: {jobId}</h2>
+      {jobDetails ? (
+        <>
+          <h2>Apply for {jobDetails.title}</h2>
+          <h4>{jobDetails.title}</h4>
+          <p>
+            <strong>Company:</strong> {jobDetails.company}
+          </p>
+          <p>
+            <strong>Location:</strong> {jobDetails.location}
+          </p>
+          <p>
+            <strong>Salary:</strong>{" "}
+            {jobDetails.salary ? `$${jobDetails.salary}` : "Not specified"}
+          </p>
+          <p>
+            <strong>Description:</strong> {jobDetails.description}
+          </p>
+          <p>
+            <strong>Requirements:</strong>
+          </p>
+        </>
+      ) : (
+        <p>Loading job details...</p>
+      )}
+
       {message && <p className="message">{message}</p>}
 
       <form onSubmit={handleSubmit}>

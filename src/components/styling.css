@@ -150,6 +150,30 @@ body {
   overflow-y: auto;
   max-height: 100%;
 }
+.jobs-container {
+  display: flex;
+}
+
+.filter-section {
+  width: 250px;
+  padding: 20px;
+  border-right: 1px solid #ddd;
+}
+
+.filter-section label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.jobs-wrapper {
+  display: flex;
+  flex-grow: 1;
+}
+
+.jobs-list, .job-details {
+  width: 50%;
+  padding: 20px;
+}
 
 /* Scrollbar Styling */
 .jobs-list::-webkit-scrollbar {
