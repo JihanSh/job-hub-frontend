@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./styling.css";
 import axios from "axios";
 import AllJobs from "./AllJobs";
+import { Link } from "react-router-dom";
 
 function Home() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -89,7 +90,12 @@ function Home() {
                 <p>
                   <strong>Location:</strong> {job.location}
                 </p>
-                <button className="apply-btn">Apply Now</button>
+                <Link
+                  to={`/applications/${job._id}`}
+                  state={{ job: job }}
+                >
+                  <button className="apply-btn">Apply Now</button>
+                </Link>
               </div>
             ))}
           </div>
@@ -97,7 +103,7 @@ function Home() {
       ) : jobs !== null ? (
         <p>No jobs found</p>
       ) : null}
-      <AllJobs/>
+      <AllJobs />
     </div>
   );
 }

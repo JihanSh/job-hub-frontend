@@ -8,6 +8,7 @@ import Home from "./components/Home";
 import AllJobs from "./components/AllJobs";
 import Applications from "./components/PostApplications";
 import UserApplications from "./components/UserApplications";
+import JobsWithApplications from "./components/JobsWithApplications";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/all-jobs" element={<AllJobs />} />
         <Route path="/applications/:jobId" element={<Applications />} />
         <Route path="/my-applications" element={<UserApplications />} />
+        <Route path="/my-jobs" element={<JobsWithApplications />} />
       </Routes>
     </>
   );

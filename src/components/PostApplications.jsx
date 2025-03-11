@@ -9,7 +9,7 @@ function Applications() {
   const navigate = useNavigate();
   const location = useLocation();
   const jobDetails = location.state?.job; 
-  console.log(jobDetails)
+  console.log("job details",jobDetails)
   const [userId, setUserId] = useState(null);
   const [formData, setFormData] = useState({
     coverLetter: "",
