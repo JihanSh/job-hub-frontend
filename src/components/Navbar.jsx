@@ -19,9 +19,9 @@ function Navbar() {
 
   const handleLogout = () => {
     localStorage.removeItem("profileImage");
-    localStorage.removeItem("token"); 
+    localStorage.removeItem("token");
     setProfileImage(null);
-    navigate("/login"); 
+    navigate("/login");
   };
 
   return (
@@ -40,7 +40,7 @@ function Navbar() {
         </div>
 
         <div className="profile-section">
-          {profileImage  ? (
+          {profileImage ? (
             <div className="profile-dropdown">
               <img
                 src={profileImage}
@@ -51,6 +51,9 @@ function Navbar() {
               <FontAwesomeIcon icon={faCaretDown} className="dropdown-icon" />
               {dropdownOpen && (
                 <div className="dropdown-menu">
+                  <Link to="/my-applications">
+                    <button>My Applications</button>
+                  </Link>
                   <button onClick={handleLogout}>Logout</button>
                 </div>
               )}

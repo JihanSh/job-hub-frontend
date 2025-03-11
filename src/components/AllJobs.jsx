@@ -13,7 +13,8 @@ function AllJobs() {
     title: "",
     company: "",
     location: "",
-    salary: false, // Checkbox for salary filter
+    minSalary: 0,
+    maxSalary: 150000,
   });
 
   useEffect(() => {
@@ -21,7 +22,7 @@ function AllJobs() {
       try {
         const response = await axios.get("http://localhost:5005/api/jobs");
         setJobs(response.data);
-        setFilteredJobs(response.data); // Initialize filtered jobs with all jobs
+        setFilteredJobs(response.data);
       } catch (err) {
         setError("Failed to fetch jobs. Please try again.");
         console.error("Error fetching jobs:", err);
@@ -32,33 +33,32 @@ function AllJobs() {
 
     fetchJobs();
   }, []);
-
-  // Extract unique values for dropdown options
   const getUniqueValues = (key) => {
     return [...new Set(jobs.map((job) => job[key]))].filter(Boolean);
   };
-
-  // Update filters and apply filtering logic
   const handleFilterChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    const newFilters = {
-      ...filters,
-      [name]: type === "checkbox" ? checked : value,
-    };
-    setFilters(newFilters);
+    const { name, value } = e.target;
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [name]: name.includes("Salary") ? Number(value) : value,
+    }));
+  };
 
-    // Apply Filtering Logic
+  useEffect(() => {
     let filtered = jobs.filter((job) => {
+      const jobSalary = job.salary || 0; 
+
       return (
-        (newFilters.title ? job.title === newFilters.title : true) &&
-        (newFilters.company ? job.company === newFilters.company : true) &&
-        (newFilters.location ? job.location === newFilters.location : true) &&
-        (!newFilters.salary || job.salary) // Only show jobs with salary if checked
+        (filters.title ? job.title === filters.title : true) &&
+        (filters.company ? job.company === filters.company : true) &&
+        (filters.location ? job.location === filters.location : true) &&
+        jobSalary >= filters.minSalary &&
+        jobSalary <= filters.maxSalary
       );
     });
 
     setFilteredJobs(filtered);
-  };
+  }, [filters, jobs]);
 
   return (
     <div className="jobs-container">
@@ -66,7 +66,6 @@ function AllJobs() {
       <div className="filter-section">
         <h3>Filter Jobs</h3>
 
-        {/* Job Title Dropdown */}
         <label>Title:</label>
         <select
           name="title"
@@ -81,7 +80,6 @@ function AllJobs() {
           ))}
         </select>
 
-        {/* Company Dropdown */}
         <label>Company:</label>
         <select
           name="company"
@@ -96,7 +94,6 @@ function AllJobs() {
           ))}
         </select>
 
-        {/* Location Dropdown */}
         <label>Location:</label>
         <select
           name="location"
@@ -111,19 +108,30 @@ function AllJobs() {
           ))}
         </select>
 
-        {/* Salary Checkbox */}
-        <label>
+        <label>Salary Range:</label>
+        <div className="salary-range">
           <input
-            type="checkbox"
-            name="salary"
-            checked={filters.salary}
+            type="number"
+            name="minSalary"
+            value={filters.minSalary}
             onChange={handleFilterChange}
+            min="0"
+            max="150000"
+            placeholder="Min Salary"
           />
-          Show only jobs with salary specified
-        </label>
+          <span>to</span>
+          <input
+            type="number"
+            name="maxSalary"
+            value={filters.maxSalary}
+            onChange={handleFilterChange}
+            min="0"
+            max="150000"
+            placeholder="Max Salary"
+          />
+        </div>
       </div>
 
-      {/* Jobs Listing */}
       <div className="jobs-wrapper">
         <div className="jobs-list">
           <h3>All Jobs</h3>
@@ -154,7 +162,6 @@ function AllJobs() {
           )}
         </div>
 
-        {/* Job Details */}
         <div className="job-details">
           {selectedJob ? (
             <>
