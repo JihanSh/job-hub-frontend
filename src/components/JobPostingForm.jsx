@@ -50,6 +50,7 @@ function JobPostingForm() {
           },
         }
       );
+      console.log("responseeeee" , response)
       setSuccessMessage("Job posted successfully!");
       setFormData({
         title: "",

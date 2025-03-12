@@ -4,7 +4,8 @@ import "./styling.css";
 
 function JobsWithApplications() {
   const [jobs, setJobs] = useState([]);
-  const [userId, setUserId] = useState(localStorage.getItem("userId")); 
+  const [userId, setUserId] = useState(localStorage.getItem("userId"));
+  const [error, setError] = useState(""); // For error handling
 
   useEffect(() => {
     if (!userId) return;
@@ -23,6 +24,7 @@ function JobsWithApplications() {
         console.log("response", response.data);
       } catch (error) {
         console.error("Error fetching jobs:", error);
+        setError("Failed to fetch jobs. Please try again later.");
       }
     };
 
@@ -32,6 +34,8 @@ function JobsWithApplications() {
   return (
     <div className="container">
       <h2 className="heading">Jobs & Applications</h2>
+      {error && <p className="error-message">{error}</p>}{" "}
+      {/* Show error message if any */}
       {jobs.length > 0 ? (
         <div className="job-list">
           {jobs.map((job) => (
