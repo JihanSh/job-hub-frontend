@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import "./styling.css";
+import { useNavigate } from "react-router-dom";
 
 const Authentication = () => {
   const { register, handleSubmit, reset } = useForm();
@@ -9,7 +10,13 @@ const Authentication = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
-
+  const navigate = useNavigate();
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/");
+    }
+  }, []);
   const onSubmit = async (data) => {
     setLoading(true);
     setError("");
@@ -55,6 +62,7 @@ const Authentication = () => {
           console.log("name", response.data);
 
           alert("Login successful!");
+          navigate("/");
         } else {
           console.error("authToken not found in response");
         }
