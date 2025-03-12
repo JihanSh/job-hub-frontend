@@ -4,12 +4,12 @@ import "./styling.css";
 
 function JobsWithApplications() {
   const [jobs, setJobs] = useState([]);
-  const [userId, setUserId] = useState(localStorage.getItem("userId"));
+  const [userId, setUserId] = useState(localStorage.getItem("user"));
   const [error, setError] = useState(""); // For error handling
 
   useEffect(() => {
     // Log the userId and token to check if they are being set
-    console.log("userId:", userId);
+    console.log("user:", localStorage.getItem("user"));
     console.log("Token:", localStorage.getItem("token"));
 
     if (!userId) {
