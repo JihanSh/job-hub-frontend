@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import * as jwt_decode from "jwt-decode";
 import "./styling.css";
 
 function Applications() {
   const { jobId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const jobDetails = location.state?.job; 
-  console.log("job details",jobDetails)
+  const jobDetails = location.state?.job;
+  console.log("Job Details:", jobDetails);
+
   const [userId, setUserId] = useState(null);
   const [formData, setFormData] = useState({
     coverLetter: "",
@@ -19,19 +19,20 @@ function Applications() {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
+    // Get userId directly from localStorage
+    const storedUser = localStorage.getItem("user");
+    if (!storedUser) {
       navigate("/user-auth");
       return;
     }
 
     try {
-      const decoded = jwt_decode(token);
-      setUserId(decoded._id);
+      const userData = JSON.parse(storedUser);
+      setUserId(userData._id);
     } catch (error) {
-      console.error("Invalid token:", error);
+      console.error("Error parsing user data:", error);
       setMessage("Authentication error. Please log in again.");
-      localStorage.removeItem("token");
+      localStorage.removeItem("user");
       navigate("/user-auth");
     }
   }, [navigate]);
@@ -63,10 +64,13 @@ function Applications() {
 
     try {
       await axios.post(
-        `${import.meta.env.VITE_API_URL}/${jobId}`,
+        `${import.meta.env.VITE_API_URL}/api/jobs/${jobId}/apply`,
         formDataToSend,
         {
-          headers: { "Content-Type": "multipart/form-data" },
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         }
       );
 
@@ -74,6 +78,7 @@ function Applications() {
       setFormData({ coverLetter: "", resume: null });
     } catch (error) {
       setMessage("Failed to submit application. Try again.");
+      console.error("Application Error:", error);
     } finally {
       setLoading(false);
     }

@@ -1,24 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import * as jwt_decode from "jwt-decode";
-import "./styling.css"
+import "./styling.css";
 
 function JobsWithApplications() {
   const [jobs, setJobs] = useState([]);
-  const [userId, setUserId] = useState(null);
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    if (token) {
-      try {
-        const decoded = jwt_decode(token);
-        setUserId(decoded._id);
-      } catch (error) {
-        console.error("Invalid token:", error);
-      }
-    }
-  }, []);
+  const [userId, setUserId] = useState(localStorage.getItem("userId")); 
 
   useEffect(() => {
     if (!userId) return;

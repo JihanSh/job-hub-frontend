@@ -16,7 +16,6 @@ function JobPostingForm() {
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
 
-  // Get token when component mounts
   useEffect(() => {
     setToken(localStorage.getItem("token"));
   }, []);

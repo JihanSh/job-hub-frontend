@@ -46,15 +46,16 @@ const Authentication = () => {
           email: data.email,
           password: data.password,
         });
-
+        console.log("Response:", response);
         if (response.data && response.data.authToken) {
           localStorage.setItem("token", response.data.authToken);
+          localStorage.setItem("user id", response.data.payload._id); // This is where you're storing the user ID
+          console.log("User ID stored:", response.data.payload._id); // Log the user ID to verify it
+
           localStorage.setItem(
             "profileImage",
             response.data.payload.profileImage
           );
-
-          // ✅ Update user context for immediate UI updates
           setUser({
             name: response.data.payload.name,
             profileImage: response.data.payload.profileImage,
@@ -62,6 +63,7 @@ const Authentication = () => {
 
           alert("Login successful!");
           navigate("/");
+          console.log(response.data.payload); // Log the entire payload for debugging
         } else {
           console.error("authToken not found in response");
         }

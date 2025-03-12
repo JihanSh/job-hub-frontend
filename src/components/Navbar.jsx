@@ -3,29 +3,29 @@ import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/images/job-hub.png";
 import "./styling.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faSuitcase,
-  faCaretDown,
-  faUserCircle,
-} from "@fortawesome/free-solid-svg-icons";
-// Corrected import for jwt-decode with default export
-import * as jwt_decode from "jwt-decode";
-
-import { useUser } from "./UserContext"; // Import useUser
+import { faSuitcase, faCaretDown } from "@fortawesome/free-solid-svg-icons";
+import { useUser } from "./UserContext"; // Import User Context
 
 function Navbar() {
   const { user, setUser } = useUser();
-    const [profileImage, setProfileImage] = useState(null);
-    const [userName, setUserName] = useState(null);
-    const [dropdownOpen, setDropdownOpen] = useState(false);
-    const navigate = useNavigate();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const navigate = useNavigate();
 
+  useEffect(() => {
+    // Get user data from localStorage if context is empty
+    if (!user) {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
+    }
+  }, [user, setUser]);
 
   const handleLogout = () => {
-    localStorage.removeItem("profileImage");
+    localStorage.removeItem("user");
     localStorage.removeItem("token");
-    setUser(null); // Clear user data from state
-    navigate("/login");
+    setUser(null); 
+    navigate("/");
   };
 
   return (
@@ -66,7 +66,7 @@ function Navbar() {
               {dropdownOpen && (
                 <div className="dropdown-menu">
                   <Link to="/my-jobs">
-                    <button>My Jobs Postings</button>
+                    <button>My Job Postings</button>
                   </Link>
                   <Link to="/my-applications">
                     <button>My Applications</button>
