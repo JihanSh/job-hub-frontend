@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import "./styling.css";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "./UserContext";
 
 const Authentication = () => {
   const { register, handleSubmit, reset } = useForm();
@@ -11,20 +12,14 @@ const Authentication = () => {
   const [error, setError] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
   const navigate = useNavigate();
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      navigate("/");
-    }
-  }, []);
+  const { setUser } = useUser(); // ✅ Correctly using context
+
   const onSubmit = async (data) => {
     setLoading(true);
     setError("");
 
     try {
-      const BASE_URL = `${
-        import.meta.env.VITE_API_URL || "http://localhost:5005"
-      }`;
+      const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5005";
       const url = isSignup
         ? `${BASE_URL}/auth/signup`
         : `${BASE_URL}/auth/login`;
@@ -44,7 +39,6 @@ const Authentication = () => {
           headers: { "Content-Type": "multipart/form-data" },
         });
 
-        // If signup is successful, switch to login mode
         alert("Signup successful! Now log in.");
         setIsSignup(false);
       } else {
@@ -59,7 +53,12 @@ const Authentication = () => {
             "profileImage",
             response.data.payload.profileImage
           );
-          console.log("name", response.data);
+
+          // ✅ Update user context for immediate UI updates
+          setUser({
+            name: response.data.payload.name,
+            profileImage: response.data.payload.profileImage,
+          });
 
           alert("Login successful!");
           navigate("/");

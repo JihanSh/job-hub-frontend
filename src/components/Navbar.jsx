@@ -11,32 +11,20 @@ import {
 // Corrected import for jwt-decode with default export
 import * as jwt_decode from "jwt-decode";
 
+import { useUser } from "./UserContext"; // Import useUser
+
 function Navbar() {
-  const [profileImage, setProfileImage] = useState(null);
-  const [userName, setUserName] = useState(null);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const navigate = useNavigate();
+  const { user, setUser } = useUser();
+    const [profileImage, setProfileImage] = useState(null);
+    const [userName, setUserName] = useState(null);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const navigate = useNavigate();
 
-  useEffect(() => {
-    const storedImage = localStorage.getItem("profileImage");
-    setProfileImage(storedImage);
-
-    const token = localStorage.getItem("token");
-    if (token) {
-      try {
-        const decoded = jwt_decode(token); // Using jwt_decode correctly
-        setUserName(decoded.name);
-      } catch (err) {
-        console.error("Error decoding token:", err);
-      }
-    }
-  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("profileImage");
     localStorage.removeItem("token");
-    setProfileImage(null);
-    setUserName(null);
+    setUser(null); // Clear user data from state
     navigate("/login");
   };
 
@@ -57,20 +45,20 @@ function Navbar() {
         </div>
 
         <div className="profile-section">
-          {profileImage || userName ? (
+          {user ? (
             <div className="profile-dropdown">
               <div
                 className="profile-display"
                 onClick={() => setDropdownOpen(!dropdownOpen)}
               >
-                {profileImage ? (
+                {user.profileImage ? (
                   <img
-                    src={profileImage}
+                    src={user.profileImage}
                     className="profile-image"
                     alt="Profile"
                   />
                 ) : (
-                  <div className="profile-name">{userName}</div>
+                  <div className="profile-name">{user.name}</div>
                 )}
                 <FontAwesomeIcon icon={faCaretDown} className="dropdown-icon" />
               </div>
