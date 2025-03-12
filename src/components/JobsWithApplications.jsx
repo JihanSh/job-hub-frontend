@@ -9,7 +9,7 @@ function JobsWithApplications() {
 
   useEffect(() => {
     // Log the userId and token to check if they are being set
-    console.log("user:", localStorage.getItem("user"));
+    console.log("user:", userId);
     console.log("Token:", localStorage.getItem("token"));
 
     if (!userId) {

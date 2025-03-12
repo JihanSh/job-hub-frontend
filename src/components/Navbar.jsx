@@ -11,21 +11,28 @@ function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
+  // Load user from localStorage if not available in context
   useEffect(() => {
-    // Get user data from localStorage if context is empty
     if (!user) {
       const storedUser = localStorage.getItem("user");
+
       if (storedUser) {
-        setUser(JSON.parse(storedUser));
+        try {
+          const parsedUser = JSON.parse(storedUser);
+          setUser(parsedUser); // Update context with parsed user data
+        } catch (error) {
+          console.error("Failed to parse user data from localStorage", error);
+        }
       }
     }
   }, [user, setUser]);
 
   const handleLogout = () => {
+    // Clear user data and token from localStorage
     localStorage.removeItem("user");
     localStorage.removeItem("token");
-    setUser(null); 
-    navigate("/");
+    setUser(null); // Clear user from context
+    navigate("/"); // Redirect to homepage after logout
   };
 
   return (
