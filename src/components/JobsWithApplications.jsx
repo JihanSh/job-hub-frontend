@@ -8,7 +8,14 @@ function JobsWithApplications() {
   const [error, setError] = useState(""); // For error handling
 
   useEffect(() => {
-    if (!userId) return;
+    // Log the userId and token to check if they are being set
+    console.log("userId:", userId);
+    console.log("Token:", localStorage.getItem("token"));
+
+    if (!userId) {
+      setError("User not logged in");
+      return;
+    }
 
     const fetchJobs = async () => {
       try {
@@ -20,8 +27,15 @@ function JobsWithApplications() {
             },
           }
         );
-        setJobs(response.data);
-        console.log("response", response.data);
+
+        // Check the response data in the console
+        console.log("API Response:", response);
+
+        if (response.data && response.data.length > 0) {
+          setJobs(response.data);
+        } else {
+          setJobs([]); // If no jobs are returned, set jobs to an empty array
+        }
       } catch (error) {
         console.error("Error fetching jobs:", error);
         setError("Failed to fetch jobs. Please try again later.");
