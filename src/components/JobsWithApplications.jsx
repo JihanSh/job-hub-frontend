@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { jwtDecode } from "jwt-decode";
+import * as jwt_decode from "jwt-decode";
 import "./styling.css"
 
 function JobsWithApplications() {
@@ -12,7 +12,7 @@ function JobsWithApplications() {
 
     if (token) {
       try {
-        const decoded = jwtDecode(token);
+        const decoded = jwt_decode(token);
         setUserId(decoded._id);
       } catch (error) {
         console.error("Invalid token:", error);
@@ -26,7 +26,7 @@ function JobsWithApplications() {
     const fetchJobs = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5005/api/jobs/users/${userId}`,
+          `${import.meta.env.VITE_API_URL}/api/jobs/users/${userId}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,

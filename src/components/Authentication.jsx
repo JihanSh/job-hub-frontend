@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useForm } from "react-hook-form";
-import "./styling.css"; 
+import "./styling.css";
 
 const Authentication = () => {
   const { register, handleSubmit, reset } = useForm();
@@ -15,7 +15,9 @@ const Authentication = () => {
     setError("");
 
     try {
-      const BASE_URL = "http://localhost:5005";
+      const BASE_URL = `${
+        import.meta.env.VITE_API_URL || "http://localhost:5005"
+      }`;
       const url = isSignup
         ? `${BASE_URL}/auth/signup`
         : `${BASE_URL}/auth/login`;
@@ -46,7 +48,10 @@ const Authentication = () => {
 
         if (response.data && response.data.authToken) {
           localStorage.setItem("token", response.data.authToken);
-          localStorage.setItem("profileImage", response.data.payload.profileImage); 
+          localStorage.setItem(
+            "profileImage",
+            response.data.payload.profileImage
+          );
           console.log("name", response.data);
 
           alert("Login successful!");
@@ -62,7 +67,6 @@ const Authentication = () => {
       setLoading(false);
     }
   };
-
 
   return (
     <div className="auth-container">

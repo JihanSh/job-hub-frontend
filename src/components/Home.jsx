@@ -27,7 +27,7 @@ function Home() {
       }
 
       const response = await axios.get(
-        `http://localhost:5005/api/jobs?${query.toString()}`
+        `${import.meta.env.VITE_API_URL}/api/jobs?${query.toString()}`
       );
       setJobs(response.data);
     } catch (err) {

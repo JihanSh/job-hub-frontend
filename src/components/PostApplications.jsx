@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import { jwtDecode } from "jwt-decode";
+import * as jwt_decode from "jwt-decode";
 import "./styling.css";
 
 function Applications() {
@@ -26,7 +26,7 @@ function Applications() {
     }
 
     try {
-      const decoded = jwtDecode(token);
+      const decoded = jwt_decode(token);
       setUserId(decoded._id);
     } catch (error) {
       console.error("Invalid token:", error);
@@ -63,7 +63,7 @@ function Applications() {
 
     try {
       await axios.post(
-        `http://localhost:5005/api/applications/${jobId}`,
+        `${import.meta.env.VITE_API_URL}/${jobId}`,
         formDataToSend,
         {
           headers: { "Content-Type": "multipart/form-data" },

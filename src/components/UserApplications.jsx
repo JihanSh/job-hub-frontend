@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import {jwtDecode} from "jwt-decode"; 
+import * as jwt_decode from "jwt-decode";
 import "./styling.css";
 
 function MyApplications() {
@@ -21,12 +21,12 @@ function MyApplications() {
       }
 
       try {
-        const decoded = jwtDecode(token);
+        const decoded = jwt_decode(token);
         const userId = decoded._id;
         console.log("user",userId)
 
         const response = await axios.get(
-          `http://localhost:5005/api/applications/users/${userId}`,
+          `${import.meta.env.VITE_API_URL}/api/applications/users/${userId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }

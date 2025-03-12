@@ -43,7 +43,7 @@ function JobPostingForm() {
 
     try {
       const response = await axios.post(
-        "http://localhost:5005/api/jobs",
+        `${import.meta.env.VITE_API_URL}/api/jobs`,
         jobData,
         {
           headers: {

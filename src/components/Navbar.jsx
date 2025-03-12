@@ -8,7 +8,8 @@ import {
   faCaretDown,
   faUserCircle,
 } from "@fortawesome/free-solid-svg-icons";
-import {jwtDecode} from "jwt-decode"; 
+// Corrected import for jwt-decode with default export
+import * as jwt_decode from "jwt-decode";
 
 function Navbar() {
   const [profileImage, setProfileImage] = useState(null);
@@ -23,8 +24,8 @@ function Navbar() {
     const token = localStorage.getItem("token");
     if (token) {
       try {
-        const decoded = jwtDecode(token);
-        setUserName(decoded.name); 
+        const decoded = jwt_decode(token); // Using jwt_decode correctly
+        setUserName(decoded.name);
       } catch (err) {
         console.error("Error decoding token:", err);
       }
