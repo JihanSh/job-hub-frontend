@@ -8,9 +8,10 @@ function Applications() {
   const navigate = useNavigate();
   const location = useLocation();
   const jobDetails = location.state?.job;
+
   console.log("Job Details:", jobDetails);
 
-  const [userId, setUserId] = useState(null);
+  const [userId, setUserId] = useState(localStorage.getItem("user"));
   const [formData, setFormData] = useState({
     coverLetter: "",
     resume: null,
@@ -19,21 +20,25 @@ function Applications() {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    // Get userId directly from localStorage
-    const storedUser = localStorage.getItem("user");
+    const storedUser = userId;
+
     if (!storedUser) {
+      console.warn("No user data found. Redirecting to login.");
       navigate("/user-auth");
       return;
     }
 
     try {
+      // Ensure it's a valid JSON format
       const userData = JSON.parse(storedUser);
-      setUserId(userData._id);
+
+      if (userData && userData._id) {
+        setUserId(userData._id);
+      } else {
+        throw new Error("User data is invalid");
+      }
     } catch (error) {
       console.error("Error parsing user data:", error);
-      setMessage("Authentication error. Please log in again.");
-      localStorage.removeItem("user");
-      navigate("/user-auth");
     }
   }, [navigate]);
 
@@ -63,8 +68,8 @@ function Applications() {
     formDataToSend.append("resume", formData.resume);
 
     try {
-      await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/jobs/${jobId}/apply`,
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/applications/${jobId}`,
         formDataToSend,
         {
           headers: {
@@ -74,11 +79,12 @@ function Applications() {
         }
       );
 
+      console.log("Application Response:", response);
       setMessage("Application submitted successfully!");
       setFormData({ coverLetter: "", resume: null });
     } catch (error) {
+      console.error("Application Error:", error.response || error);
       setMessage("Failed to submit application. Try again.");
-      console.error("Application Error:", error);
     } finally {
       setLoading(false);
     }
@@ -102,9 +108,6 @@ function Applications() {
           </p>
           <p>
             <strong>Description:</strong> {jobDetails.description}
-          </p>
-          <p>
-            <strong>Requirements:</strong>
           </p>
         </>
       ) : (

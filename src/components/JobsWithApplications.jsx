@@ -5,10 +5,9 @@ import "./styling.css";
 function JobsWithApplications() {
   const [jobs, setJobs] = useState([]);
   const [userId, setUserId] = useState(localStorage.getItem("user"));
-  const [error, setError] = useState(""); // For error handling
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    // Log the userId and token to check if they are being set
     console.log("user:", userId);
     console.log("Token:", localStorage.getItem("token"));
 
@@ -28,13 +27,12 @@ function JobsWithApplications() {
           }
         );
 
-        // Check the response data in the console
-        console.log("API Response:", response);
+        console.log("job Response:", response);
 
         if (response.data && response.data.length > 0) {
           setJobs(response.data);
         } else {
-          setJobs([]); // If no jobs are returned, set jobs to an empty array
+          setJobs([]);
         }
       } catch (error) {
         console.error("Error fetching jobs:", error);
@@ -45,20 +43,54 @@ function JobsWithApplications() {
     fetchJobs();
   }, [userId]);
 
+  // Function to update application status
+  const updateApplicationStatus = async (appId, newStatus) => {
+    try {
+      const response = await axios.put(
+        `${import.meta.env.VITE_API_URL}/api/applications/${appId}`,
+        { status: newStatus },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        // Update the state to reflect the new status
+        setJobs((prevJobs) =>
+          prevJobs.map((job) => ({
+            ...job,
+            applications: job.applications.map((app) =>
+              app._id === appId ? { ...app, status: newStatus } : app
+            ),
+          }))
+        );
+      }
+    } catch (error) {
+      console.error("Error updating application status:", error);
+      setError("Failed to update application status.");
+    }
+  };
+
   return (
     <div className="container">
-      <h2 className="heading">Jobs & Applications</h2>
-      {error && <p className="error-message">{error}</p>}{" "}
-      {/* Show error message if any */}
+      <h2 className="heading">Manage Applications</h2>
+      {error && <p className="error-message">{error}</p>}
       {jobs.length > 0 ? (
         <div className="job-list">
           {jobs.map((job) => (
             <div key={job._id} className="job-card">
               <h3 className="job-title">{job.title}</h3>
-              <p className="job-info">
-                {job.company} - {job.location}
+              <p className="job-company">
+                <strong>Company:</strong> {job.company}
               </p>
-              <p className="job-description">{job.description}</p>
+              <p className="job-location">
+                <strong>Location:</strong> {job.location}
+              </p>
+              <p className="job-description">
+                <strong>Description:</strong> {job.description}
+              </p>
 
               <h4 className="applicants-heading">Applicants:</h4>
               {job.applications && job.applications.length > 0 ? (
@@ -72,29 +104,18 @@ function JobsWithApplications() {
                         <strong>Email:</strong> {app.user?.email || "N/A"}
                       </p>
                       <p>
-                        <strong>Resume:</strong>{" "}
-                        <a
-                          href={app.resume}
-                          className="resume-link"
-                          target="_blank"
-                          rel="noopener noreferrer"
+                        <strong>Status:</strong>
+                        <select
+                          value={app.status}
+                          onChange={(e) =>
+                            updateApplicationStatus(app._id, e.target.value)
+                          }
+                          className="status-dropdown"
                         >
-                          View
-                        </a>
-                      </p>
-                      <p>
-                        <strong>Status:</strong>{" "}
-                        <span
-                          className={`status-badge ${
-                            app.status === "accepted"
-                              ? "status-accepted"
-                              : app.status === "rejected"
-                              ? "status-rejected"
-                              : "status-pending"
-                          }`}
-                        >
-                          {app.status}
-                        </span>
+                          <option value="pending">Pending</option>
+                          <option value="accepted">Accepted</option>
+                          <option value="rejected">Rejected</option>
+                        </select>
                       </p>
                     </li>
                   ))}

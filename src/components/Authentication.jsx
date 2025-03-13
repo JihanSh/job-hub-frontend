@@ -49,9 +49,8 @@ const Authentication = () => {
         console.log("Response:", response);
         if (response.data && response.data.authToken) {
           localStorage.setItem("token", response.data.authToken);
-          localStorage.setItem("user", response.data.payload._id); // This is where you're storing the user ID
-          console.log("User ID stored:", response.data.payload._id); // Log the user ID to verify it
-
+          localStorage.setItem("user", response.data.payload._id); 
+          console.log("User ID stored:", response.data.payload._id); 
           localStorage.setItem(
             "profileImage",
             response.data.payload.profileImage
