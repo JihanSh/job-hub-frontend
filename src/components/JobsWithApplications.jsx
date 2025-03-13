@@ -8,9 +8,6 @@ function JobsWithApplications() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    console.log("user:", userId);
-    console.log("Token:", localStorage.getItem("token"));
-
     if (!userId) {
       setError("User not logged in");
       return;
@@ -27,13 +24,7 @@ function JobsWithApplications() {
           }
         );
 
-        console.log("job Response:", response);
-
-        if (response.data && response.data.length > 0) {
-          setJobs(response.data);
-        } else {
-          setJobs([]);
-        }
+        setJobs(response.data || []);
       } catch (error) {
         console.error("Error fetching jobs:", error);
         setError("Failed to fetch jobs. Please try again later.");
@@ -57,7 +48,6 @@ function JobsWithApplications() {
       );
 
       if (response.status === 200) {
-        // Update the state to reflect the new status
         setJobs((prevJobs) =>
           prevJobs.map((job) => ({
             ...job,
@@ -70,6 +60,24 @@ function JobsWithApplications() {
     } catch (error) {
       console.error("Error updating application status:", error);
       setError("Failed to update application status.");
+    }
+  };
+
+  // Function to delete a job
+  const deleteJob = async (jobId) => {
+    if (!window.confirm("Are you sure you want to delete this job?")) return;
+
+    try {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/jobs/${jobId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      setJobs((prevJobs) => prevJobs.filter((job) => job._id !== jobId));
+    } catch (error) {
+      console.error("Error deleting job:", error);
+      setError("Failed to delete job.");
     }
   };
 
@@ -103,6 +111,28 @@ function JobsWithApplications() {
                       <p>
                         <strong>Email:</strong> {app.user?.email || "N/A"}
                       </p>
+                      {/* Display Resume if Available */}
+                      {app.resume && (
+                        <p>
+                          <strong>Resume:</strong>{" "}
+                          <a
+                            href={app.resume}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="resume-link"
+                          >
+                            View Resume
+                          </a>{" "}
+                          |{" "}
+                          <a
+                            href={app.resume}
+                            download
+                            className="resume-download"
+                          >
+                            Download
+                          </a>
+                        </p>
+                      )}
                       <p>
                         <strong>Status:</strong>
                         <select
@@ -123,6 +153,14 @@ function JobsWithApplications() {
               ) : (
                 <p className="no-applications">No applications yet.</p>
               )}
+
+              {/* Delete Job Button */}
+              <button
+                className="delete-job-btn"
+                onClick={() => deleteJob(job._id)}
+              >
+                Delete Job
+              </button>
             </div>
           ))}
         </div>
