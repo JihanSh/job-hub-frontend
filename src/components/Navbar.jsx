@@ -3,7 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/images/job-hub.png";
 import "./styling.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSuitcase, faCaretDown } from "@fortawesome/free-solid-svg-icons";
+import {
+  faSuitcase,
+  faCaretDown,
+  faHeart,
+} from "@fortawesome/free-solid-svg-icons";
 import { useUser } from "./UserContext"; // Import User Context
 
 function Navbar() {
@@ -48,6 +52,13 @@ function Navbar() {
           <FontAwesomeIcon icon={faSuitcase} />
           <Link to="/post-job">
             <p>Post Jobs</p>
+          </Link>
+        </div>
+
+        {/* Favorites Icon */}
+        <div className="favorites-icon">
+          <Link to="/favorites">
+            <FontAwesomeIcon icon={faHeart} className="heart-icon" />
           </Link>
         </div>
 

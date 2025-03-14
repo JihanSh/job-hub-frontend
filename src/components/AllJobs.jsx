@@ -9,6 +9,9 @@ function AllJobs() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedJob, setSelectedJob] = useState(null);
+  const [favorites, setFavorites] = useState(
+    JSON.parse(localStorage.getItem("favorites")) || []
+  );
   const [filters, setFilters] = useState({
     title: "",
     company: "",
@@ -20,7 +23,9 @@ function AllJobs() {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/jobs`);
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/jobs`
+        );
         setJobs(response.data);
         setFilteredJobs(response.data);
       } catch (err) {
@@ -33,9 +38,23 @@ function AllJobs() {
 
     fetchJobs();
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+  }, [favorites]);
+
+  const toggleFavorite = (jobId) => {
+    setFavorites((prevFavorites) =>
+      prevFavorites.includes(jobId)
+        ? prevFavorites.filter((id) => id !== jobId)
+        : [...prevFavorites, jobId]
+    );
+  };
+
   const getUniqueValues = (key) => {
     return [...new Set(jobs.map((job) => job[key]))].filter(Boolean);
   };
+
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters((prevFilters) => ({
@@ -46,8 +65,7 @@ function AllJobs() {
 
   useEffect(() => {
     let filtered = jobs.filter((job) => {
-      const jobSalary = job.salary || 0; 
-
+      const jobSalary = job.salary || 0;
       return (
         (filters.title ? job.title === filters.title : true) &&
         (filters.company ? job.company === filters.company : true) &&
@@ -62,10 +80,8 @@ function AllJobs() {
 
   return (
     <div className="jobs-container">
-      {/* Filtering Sidebar */}
       <div className="filter-section">
         <h3>Filter Jobs</h3>
-
         <label>Title:</label>
         <select
           name="title"
@@ -115,9 +131,6 @@ function AllJobs() {
             name="minSalary"
             value={filters.minSalary}
             onChange={handleFilterChange}
-            min="0"
-            max="150000"
-            placeholder="Min Salary"
           />
           <span>to</span>
           <input
@@ -125,9 +138,6 @@ function AllJobs() {
             name="maxSalary"
             value={filters.maxSalary}
             onChange={handleFilterChange}
-            min="0"
-            max="150000"
-            placeholder="Max Salary"
           />
         </div>
       </div>
@@ -155,6 +165,16 @@ function AllJobs() {
                 <p>
                   <strong>Location:</strong> {job.location}
                 </p>
+                <button
+                  className={`favorite-btn ${
+                    favorites.includes(job._id) ? "favorited" : ""
+                  }`}
+                  onClick={() => toggleFavorite(job._id)}
+                >
+                  {favorites.includes(job._id)
+                    ? "★ Favorited"
+                    : "☆ Add to Favorites"}
+                </button>
               </div>
             ))
           ) : (

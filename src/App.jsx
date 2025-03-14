@@ -10,6 +10,7 @@ import Applications from "./components/PostApplications";
 import UserApplications from "./components/UserApplications";
 import JobsWithApplications from "./components/JobsWithApplications";
 import { UserProvider } from "./components/UserContext";
+import Favorites from "./components/Favorites";
 function App() {
   return (
     <>
@@ -22,6 +23,7 @@ function App() {
           <Route path="/all-jobs" element={<AllJobs />} />
           <Route path="/applications/:jobId" element={<Applications />} />
           <Route path="/my-applications" element={<UserApplications />} />
+          <Route path="/favorites" element={<Favorites />} />
           <Route path="/my-jobs" element={<JobsWithApplications />} />
         </Routes>
       </UserProvider>
